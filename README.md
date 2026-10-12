@@ -14,6 +14,7 @@ eds223-hwk1
         └── ejscreen-tech-doc-version-2-2.pdf
 
 ```
+Note: the data folder was not uploaded to this repo due to its size, but is housed locally. 
 ## Data Access
 The data for this project was taken from the United States Environmental Protection Agency's (EPA) Environmental Justice Screening and Mapping tool (version 2.2) from 2023. This tool is now defunct and cannot be accessed from the EPA. However the data used here can be accessed at the following link: [Zipped Data Folder](https://drive.google.com/file/d/1nG6Nj1bXfzQFOVMO8Km3eNy4SWu1YcIQ/view)
 
