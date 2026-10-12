@@ -1,0 +1,79 @@
+---
+title: "Environmental Justice Analysis in Alameda County"
+author: "Ashwin Chockkalingam"
+date: 10/11/2026
+format: pdf
+execute:
+  warning: false
+  message: false
+---
+
+# Introduction
+*Summary*: The location of hazardous waste treatment facilities is highly consequential due to
+the potential adverse effects of having such facilities located near people.
+Understanding where they're located and if they're located next to people is
+important to know who might be impacted and how to best write policy. In Alameda County (where I am from), those facilities are
+concentrated along the industrial corridor by the east bay (western portion of Alameda County). My hypothesis is that
+low income communities are located closer to hazardous waste treatment facilities
+because rent and home prices are likely very low in such areas.
+
+*Objective*: To compare the distribution of hazardous waste proximity across Alameda
+County's census block groups against the distribution of its low-income population. 
+
+# Loading in the necessary packages
+```{r}
+library(tidyverse)
+library(sf)
+library(here)
+library(tmap)
+```
+
+# Loading in the data we are working with
+The data comes from the US EPA's EJScreen tool at the census block group level. 
+```{r}
+# Reading in the geodatabase of EJScreen data at the Census Block Group level
+ejscreen <- sf::read_sf(here::here("data", "ejscreen","EJSCREEN_2023_BG_StatePct_with_AS_CNMI_GU_VI.gdb"))
+```
+
+# Filtering to get only Alameda County data.
+```{r}
+alameda <- ejscreen |>
+  dplyr::filter(CNTY_NAME %in% c("Alameda County"))
+```
+
+# Map 1 - Hazardous Waste Proximity in Alameda County
+This map shows how close each block group is to hazardous waste facilities ranked
+against all block groups in California. Darker red means closer to more facilities.
+```{r}
+#| fig-width: 7
+#| fig-height: 7
+# Mapping hazardous waste proximity as a percentile within California
+tm_shape(alameda) +
+  tm_title("Hazardous Waste Proximity by Block Group in Alameda County (California Percentile)") +
+  tm_fill(fill = "P_PTSDF",
+          fill.scale = tm_scale(values = "brewer.yl_or_rd"),
+          fill.legend = tm_legend(title = "Waste proximity (percentile)")) +
+            tm_graticules()
+```
+
+# Map 2 - Low Income Residents in Alameda County  
+This map shows the share of low income residents in each block group ranked against
+all block groups in California. Darker purple means a higher share of low income
+residents.
+```{r}
+#| fig-width: 7
+#| fig-height: 7
+# Mapping the low income population as a percentile within California
+tm_shape(alameda) +
+  tm_title("Low Income Share by Block Group in Alameda County (California Percentile)") +
+  tm_fill(fill = "P_LOWINCPCT",
+          fill.scale = tm_scale(values = "brewer.purples"),
+          fill.legend = tm_legend(title = "Low income (percentile)")) +
+  tm_graticules()
+```
+
+# Analysis
+I believe my hypothesis is somewhat valid because it's clear to see both maps feature a diagonal line of darker block groups located in the western portion of Alameda County. Block groups with a high proportion of low income residents match up with block groups that are in higher proximity to hazardous waste in that diagonal. However, when taking a look at other sections of Alameda County this trend doesn't perfectly continue, as not all block groups with high proximity to hazardous waste have a high proportion of low income residents and vice versa. Some correlation does not mean there is causation, so I cannot effectively conclude something, but it is clear that in certain areas lower income block groups are in higher proximity to hazardous waste facilities.
+
+# Citation
+U.S. Environmental Protection Agency (EPA). 2023. EJScreen: Environmental Justice Screening and Mapping Tool, Version 2.2. The tool is now defunct and is no longer available from the EPA.
